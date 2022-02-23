@@ -4,7 +4,6 @@ import fr.iban.events.Event;
 import fr.iban.events.EventManager;
 import fr.iban.events.enums.GameState;
 import fr.iban.events.interfaces.PlayerDamageListener;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
