@@ -4,6 +4,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public interface PlayerDamageListener {
 
-	void onPlayerDamage(EntityDamageEvent e);
-	
+    void onPlayerDamage(EntityDamageEvent e);
+
 }

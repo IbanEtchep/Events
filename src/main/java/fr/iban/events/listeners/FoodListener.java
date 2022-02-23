@@ -6,10 +6,10 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public class FoodListener implements Listener {
 
-	  @EventHandler
-	   public void onHungerDeplete(FoodLevelChangeEvent e) {
-	     e.setCancelled(true);
-	     e.setFoodLevel(20);
-	   }
-	
+    @EventHandler
+    public void onHungerDeplete(FoodLevelChangeEvent e) {
+        e.setCancelled(true);
+        e.setFoodLevel(20);
+    }
+
 }
