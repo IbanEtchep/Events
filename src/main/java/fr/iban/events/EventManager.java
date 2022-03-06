@@ -54,6 +54,7 @@ public class EventManager {
             case SUMOTORI -> event = new SumotoriEvent(plugin);
             case JUMP -> event = new JumpEvent(plugin);
             case TNTRUN -> event = new TNTRunEvent(plugin);
+            case DROPPER -> event = new DropperEvent(plugin);
         }
         if (event != null) {
             runningEvents.add(event);
