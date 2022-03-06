@@ -59,7 +59,9 @@ public class TNTRunEvent extends LastToFallEvent {
     @Override
     public void finish() {
         super.finish();
-        regenArena();
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            regenArena();
+        }, 60L);
     }
 
     private void regenArena() {
