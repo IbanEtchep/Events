@@ -44,10 +44,12 @@ public abstract class LastToFallEvent extends Event implements MoveBlockListener
     @Override
     public void finish() {
         state = GameState.FINISHED;
-        UUID winner = getPlayers().get(0);
-        winners.add(winner);
-        for (Player p : getViewers(50)) {
-            p.sendMessage("§2§lLa partie est terminée, " + Bukkit.getPlayer(winner).getName() + " a gagné !");
+        if(!getPlayers().isEmpty()){
+            UUID winner = getPlayers().get(0);
+            winners.add(winner);
+            for (Player p : getViewers(50)) {
+                p.sendMessage("§2§lLa partie est terminée, " + Bukkit.getPlayer(winner).getName() + " a gagné !");
+            }
         }
         super.finish();
     }

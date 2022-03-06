@@ -79,7 +79,7 @@ public abstract class Event {
     }
 
     public void addPlayer(UUID uuid) {
-        if (state == GameState.WAITING) {
+        if (state == GameState.WAITING && !getPlayers().contains(uuid)) {
             for (Player p : getViewers(50)) {
                 p.sendMessage("§7" + Bukkit.getPlayer(uuid).getName() + " a rejoint l'event !");
             }

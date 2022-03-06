@@ -23,7 +23,6 @@ public class PlayerMoveListener implements Listener {
         final Location from = e.getFrom();
         final Location to = e.getTo();
 
-
         int x = Math.abs(from.getBlockX() - to.getBlockX());
         int y = Math.abs(from.getBlockY() - to.getBlockY());
         int z = Math.abs(from.getBlockZ() - to.getBlockZ());
@@ -32,10 +31,9 @@ public class PlayerMoveListener implements Listener {
 
         Event event = plugin.getEventManager().getPlayingEvent(player);
 
-        if (!(event instanceof MoveBlockListener)) return;
-
-        ((MoveBlockListener) event).onMoveBlock(e);
-
+        if (event instanceof MoveBlockListener) {
+            ((MoveBlockListener) event).onMoveBlock(e);
+        }
     }
 
 }
