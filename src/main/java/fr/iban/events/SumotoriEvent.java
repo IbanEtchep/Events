@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.UUID;
 
-public class SumotoriEvent extends LastToFallEvent implements MoveBlockListener {
+public class SumotoriEvent extends LastToFallEvent {
 
     public SumotoriEvent(EventsPlugin plugin) {
         super(plugin);

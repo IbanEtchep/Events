@@ -10,10 +10,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class EventsPlugin extends JavaPlugin {
 
+    private static EventsPlugin instance;
     private EventManager eventManager;
 
     @Override
     public void onEnable() {
+        instance = this;
         saveDefaultConfig();
         eventManager = new EventManager(this);
         getCommand("event").setExecutor(new EventCMD(this));
@@ -44,4 +46,7 @@ public final class EventsPlugin extends JavaPlugin {
         return eventManager;
     }
 
+    public static EventsPlugin getInstance() {
+        return instance;
+    }
 }
