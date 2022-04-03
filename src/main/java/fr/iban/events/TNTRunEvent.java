@@ -49,7 +49,7 @@ public class TNTRunEvent extends LastToFallEvent {
                             brokenBlocks.putIfAbsent(blockToLessOne.getLocation(), blockToLessOne.getType());
                             blockTo.setType(Material.AIR);
                             blockToLessOne.setType(Material.AIR);
-                        }, 7L);
+                        }, 10L);
                     }
                 }
             }
