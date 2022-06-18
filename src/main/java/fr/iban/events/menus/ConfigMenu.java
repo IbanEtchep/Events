@@ -6,7 +6,7 @@ import fr.iban.bukkitcore.menu.RewardSelectMenu;
 import fr.iban.bukkitcore.rewards.RewardsDAO;
 import fr.iban.bukkitcore.utils.Head;
 import fr.iban.bukkitcore.utils.ItemBuilder;
-import fr.iban.common.teleport.EventAnnouce;
+import fr.iban.common.messaging.message.EventAnnounce;
 import fr.iban.events.Event;
 import fr.iban.events.tasks.StartTask;
 import org.bukkit.Bukkit;
@@ -54,7 +54,7 @@ public class ConfigMenu extends Menu {
                 }).open());
             });
         } else if (displayNameEquals(item, "§6§lAnnoncer")) {
-            core.getRedisClient().getTopic("EventAnnounce").publish(new EventAnnouce(event.getName(), event.getArena(), event.getType().getDesc(), event.getWaitSLocation(), player.getName()));
+            core.getMessagingManager().sendMessageAsync("EventAnnounce", new EventAnnounce(event.getName(), event.getArena(), event.getType().getDesc(), event.getWaitSLocation(), player.getName()));
         } else if (displayNameEquals(item, "§2§lLancer !")) {
             new StartTask(event).runTaskTimer(core, 0L, 20L);
         }
