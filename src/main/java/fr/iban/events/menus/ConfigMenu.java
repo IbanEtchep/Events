@@ -54,7 +54,7 @@ public class ConfigMenu extends Menu {
                 }).open());
             });
         } else if (displayNameEquals(item, "§6§lAnnoncer")) {
-            core.getMessagingManager().sendMessageAsync("EventAnnounce", new EventAnnounce(event.getName(), event.getArena(), event.getType().getDesc(), event.getWaitSLocation(), player.getName()));
+            core.getMessagingManager().sendMessage("EventAnnounce", new EventAnnounce(event.getName(), event.getArena(), event.getType().getDesc(), event.getWaitSLocation(), player.getName()));
         } else if (displayNameEquals(item, "§2§lLancer !")) {
             new StartTask(event).runTaskTimer(core, 0L, 20L);
         }

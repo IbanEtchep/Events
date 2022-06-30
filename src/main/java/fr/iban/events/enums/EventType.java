@@ -13,7 +13,7 @@ public enum EventType {
     SUMOTORI("Sumotori", "Tous les joueurs s'affrontent dans une arène, l'objectif et de faire valser les joueurs hors de celle-ci. Le dernier joueur à y subsister sera déclaré vainqueur.", LastToFallEvent.getArenaOptions()),
     JUMP("Jump", "L'objectif est de bondir d'obstacle en obstacle pour arriver en haut le premier !", JumpEvent.getArenaOptions()),
     SPEEF("Spleef", "Equipé d'une pelle, vous devrez faire tomber vos adversaires dans le vide !", LastToFallEvent.getArenaOptions()),
-    TNTRUN("TNT Run", "Les blocs sur lesquels vous marchez tombent, soyez le dernier à subsister sur la plateforme !", LastToFallEvent.getArenaOptions()),
+    TNTRUN("TNT-Run", "Les blocs sur lesquels vous marchez tombent, soyez le dernier à subsister sur la plateforme !", LastToFallEvent.getArenaOptions()),
     DROPPER("Dropper", "L'objectif est de sauter au coeur de la map et d'atteindre un espace restreint pour passer a la map suivante !", DropperEvent.getArenaOptions());
 
     private final String name;
