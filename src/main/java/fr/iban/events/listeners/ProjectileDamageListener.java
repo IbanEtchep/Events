@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 public class ProjectileDamageListener implements Listener {
 
@@ -27,6 +29,17 @@ public class ProjectileDamageListener implements Listener {
                 if(ev.getGameState().equals(GameState.RUNNING) && ev instanceof ProjectileListener) {
                     ((ProjectileListener) ev).onProjectileEvent(e);
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onThrow(ProjectileLaunchEvent e) {
+        Player p = (Player) e.getEntity().getShooter();
+        if(manager.getPlayingEvent(p) != null) {
+            Event ev = manager.getPlayingEvent(p);
+            if(ev.getGameState().equals(GameState.RUNNING) && ev instanceof ProjectileListener) {
+                ((ProjectileListener) ev).onThrow(e);
             }
         }
     }
