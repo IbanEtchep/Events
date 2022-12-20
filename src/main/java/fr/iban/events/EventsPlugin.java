@@ -25,7 +25,8 @@ public final class EventsPlugin extends JavaPlugin {
                 new TeleportListener(eventManager),
                 new DamageListeners(eventManager),
                 new JoinQuitListeners(eventManager), new FoodListener(),
-                new ProjectileDamageListener(eventManager));
+                new ProjectileDamageListener(eventManager),
+                new ArmorListener(this));
     }
 
     @Override

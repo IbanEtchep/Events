@@ -12,7 +12,7 @@ public enum EventType {
     SPEEF("Spleef", "Equipé d'une pelle, vous devrez faire tomber vos adversaires dans le vide !", LastToFallEvent.getArenaOptions()),
     TNTRUN("TNT-Run", "Les blocs sur lesquels vous marchez tombent, soyez le dernier à subsister sur la plateforme !", LastToFallEvent.getArenaOptions()),
     DROPPER("Dropper", "L'objectif est de sauter au coeur de la map et d'atteindre un espace restreint pour passer a la map suivante !", DropperEvent.getArenaOptions()),
-    SNOWBATTLE("SnowBattle", "Lancez-vous des boules de neiges et soyez le premier a garder vos 3 vies pour gagner", SnowEvent.getArenaOptions());
+    SNOWBATTLE("SnowBattle", "Lancez-vous des boules de neiges et soyez le premier a garder vos 5 vies pour gagner", SnowEvent.getArenaOptions());
 
     private final String name;
     private final String desc;

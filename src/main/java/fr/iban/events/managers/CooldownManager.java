@@ -1,4 +1,4 @@
-package fr.iban.events.cooldown;
+package fr.iban.events.managers;
 
 import org.bukkit.entity.Player;
 
