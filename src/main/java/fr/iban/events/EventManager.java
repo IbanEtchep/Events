@@ -56,6 +56,7 @@ public class EventManager {
             case TNTRUN -> event = new TNTRunEvent(plugin);
             case DROPPER -> event = new DropperEvent(plugin);
             case SNOWBATTLE -> event = new SnowEvent(plugin);
+            case PITCHOUT -> event = new PitchOutEvent(plugin);
         }
         if (event != null) {
             runningEvents.add(event);
