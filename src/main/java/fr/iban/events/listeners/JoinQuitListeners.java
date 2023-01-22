@@ -1,7 +1,7 @@
 package fr.iban.events.listeners;
 
-import fr.iban.events.Event;
-import fr.iban.events.EventManager;
+import fr.iban.events.games.Game;
+import fr.iban.events.GameManager;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinQuitListeners implements Listener {
 
-    private final EventManager manager;
+    private final GameManager manager;
 
-    public JoinQuitListeners(EventManager manager) {
+    public JoinQuitListeners(GameManager manager) {
         this.manager = manager;
     }
 
@@ -28,9 +28,9 @@ public class JoinQuitListeners implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
-        Event event = manager.getPlayingEvent(player);
-        if (event != null) {
-            event.removePlayer(player.getUniqueId());
+        Game game = manager.getPlayingGame(player);
+        if (game != null) {
+            game.removePlayer(player);
         }
     }
 

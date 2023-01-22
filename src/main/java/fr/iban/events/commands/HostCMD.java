@@ -1,7 +1,7 @@
 package fr.iban.events.commands;
 
-import fr.iban.events.Event;
-import fr.iban.events.EventManager;
+import fr.iban.events.games.Game;
+import fr.iban.events.GameManager;
 import fr.iban.events.EventsPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class HostCMD implements CommandExecutor {
 
-    private final EventManager manager;
+    private final GameManager manager;
 
     //private EventsPlugin plugin;
 
@@ -24,9 +24,9 @@ public class HostCMD implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (args.length == 0 && !manager.getRunningEvents().isEmpty()) {
-                for (Event event : manager.getRunningEvents()) {
-                    if (event.getHost().equals(player.getUniqueId())) {
-                        event.getConfigMenu().open();
+                for (Game game : manager.getRunningEvents()) {
+                    if (game.getHost().equals(player.getUniqueId())) {
+                        game.getConfigMenu().open();
                         break;
                     }
                 }

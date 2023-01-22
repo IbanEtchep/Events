@@ -1,10 +1,13 @@
-package fr.iban.events;
+package fr.iban.events.games;
 
 import fr.iban.bukkitcore.menu.Menu;
 import fr.iban.bukkitcore.rewards.Reward;
 import fr.iban.bukkitcore.rewards.RewardsDAO;
 import fr.iban.common.teleport.SLocation;
-import fr.iban.events.enums.EventType;
+import fr.iban.events.EventsPlugin;
+import fr.iban.events.GameConfig;
+import fr.iban.events.GameManager;
+import fr.iban.events.enums.GameType;
 import fr.iban.events.enums.GameState;
 import fr.iban.events.menus.ConfigMenu;
 import org.bukkit.Bukkit;
@@ -14,35 +17,28 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public abstract class Event {
+public abstract class Game {
 
     protected UUID host;
     protected List<UUID> players = new ArrayList<>();
     protected List<UUID> winners = new ArrayList<>();
     protected Menu menu;
     protected GameState state = GameState.WAITING;
-    protected EventManager manager;
+    protected GameManager manager;
     protected EventsPlugin plugin;
-    protected Reward winReward;
-    protected Reward participationReward;
-    //Options :
-    protected boolean pvp = false;
-    protected boolean damage = false;
+    protected GameConfig gameConfig;
     private String arena;
 
 
-    public Event(EventsPlugin plugin) {
+    public Game(EventsPlugin plugin) {
         this.plugin = plugin;
         this.manager = plugin.getEventManager();
     }
 
 
-    public abstract boolean isFinished();
+    public abstract boolean isNotFinished();
 
     public abstract Location getWaitingSpawnPoint();
 
@@ -50,64 +46,67 @@ public abstract class Event {
 
     public abstract SLocation getWaitSLocation();
 
-    public abstract EventType getType();
+    public abstract GameType getType();
 
     public void start() {
         for (Player player : getViewers(getWaitingSpawnPoint(), 100)) {
             if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
                 continue;
-            addPlayer(player.getUniqueId());
+            handlePlayerGameJoin(player);
         }
         setGameState(GameState.RUNNING);
     }
 
+    public void handlePlayerGameJoin(Player player) {
+        if (!getPlayers().contains(player.getUniqueId())) {
+            for (Player p : getViewers(50)) {
+                p.sendMessage("§7" + player.getName() + " a rejoint la partie !");
+            }
+            getPlayers().add(player.getUniqueId());
+        }
+    }
+
     public void finish() {
         setGameState(GameState.FINISHED);
-        //CoreBukkitPlugin.getInstance().getRedisClient().getTopic("EventAnnounce").publish(new EventAnnouce(getName(), getArena(), getType().getDesc(), null, null));
+
+        Reward winReward = gameConfig.getWinReward();
         if (winReward != null) {
             for (UUID uuid : winners) {
                 RewardsDAO.addRewardAsync(uuid.toString(), winReward.getName(), winReward.getServer(), winReward.getCommand());
-                Bukkit.getPlayer(uuid).sendMessage("§aVous avez reçu une récompense pour votre victoire ! (/recompenses)");
+                Objects.requireNonNull(Bukkit.getPlayer(uuid)).sendMessage("§aVous avez reçu une récompense pour votre victoire ! (/recompenses)");
             }
         }
 
         for (UUID uuid : winners) {
-            removePlayer(uuid);
+            Player player = Bukkit.getPlayer(uuid);
+            if(player != null) {
+                removePlayer(player);
+            }
         }
 
         manager.killEvent(this);
     }
 
-    public void addPlayer(UUID uuid) {
-        if (state == GameState.WAITING && !getPlayers().contains(uuid)) {
-            for (Player p : getViewers(50)) {
-                p.sendMessage("§7" + Bukkit.getPlayer(uuid).getName() + " a rejoint l'event !");
-            }
-            getPlayers().add(uuid);
-        }
-    }
-
-    public void removePlayer(UUID uuid) {
+    public void removePlayer(Player player) {
+        UUID uuid = player.getUniqueId();
         if (state == GameState.WAITING) {
             for (Player p : getViewers(50)) {
-                p.sendMessage("§7" + Bukkit.getPlayer(uuid).getName() + " a quitté l'event !");
+                p.sendMessage("§7" + player.getName() + " a quitté la partie !");
             }
         } else {
-            Player player = Bukkit.getPlayer(uuid);
-            if (player != null) {
-                player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4);
-                player.teleport(getWaitingSpawnPoint());
-                player.getInventory().clear();
-                if (!player.getActivePotionEffects().isEmpty()) {
-                    for (PotionEffect effect : player.getActivePotionEffects()) {
-                        player.removePotionEffect(effect.getType());
-                    }
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).setBaseValue(4);
+            player.teleport(getWaitingSpawnPoint());
+            player.getInventory().clear();
+            if (!player.getActivePotionEffects().isEmpty()) {
+                for (PotionEffect effect : player.getActivePotionEffects()) {
+                    player.removePotionEffect(effect.getType());
                 }
+            }
 
-                if (participationReward != null && !winners.contains(uuid)) {
-                    RewardsDAO.addRewardAsync(uuid.toString(), participationReward.getName(), participationReward.getServer(), participationReward.getCommand());
-                    Bukkit.getPlayer(uuid).sendMessage("§aVous avez reçu une récompense pour votre participation ! (/recompenses)");
-                }
+            Reward participationReward = getConfig().getParticipationReward();
+            if (participationReward != null && !winners.contains(uuid)) {
+                RewardsDAO.addRewardAsync(uuid.toString(), participationReward.getName(), participationReward.getServer(), participationReward.getCommand());
+                player.sendMessage("§aVous avez reçu une récompense pour votre participation ! (/recompenses)");
             }
         }
         getPlayers().remove(uuid);
@@ -159,27 +158,7 @@ public abstract class Event {
         return loc.getNearbyPlayers(distance);
     }
 
-    public Reward getReward() {
-        return winReward;
-    }
-
-    public void setReward(Reward reward) {
-        this.winReward = reward;
-    }
-
-    public Reward getParticipationReward() {
-        return participationReward;
-    }
-
-    public void setParticipationReward(Reward participationReward) {
-        this.participationReward = participationReward;
-    }
-
-    public boolean isPvp() {
-        return pvp;
-    }
-
-    public boolean isDamage() {
-        return damage;
+    public GameConfig getConfig() {
+        return gameConfig;
     }
 }

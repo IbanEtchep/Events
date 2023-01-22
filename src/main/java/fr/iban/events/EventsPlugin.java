@@ -11,13 +11,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class EventsPlugin extends JavaPlugin {
 
     private static EventsPlugin instance;
-    private EventManager eventManager;
+    private GameManager eventManager;
 
     @Override
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
-        eventManager = new EventManager(this);
+        eventManager = new GameManager(this);
         getCommand("event").setExecutor(new EventCMD(this));
         getCommand("host").setExecutor(new HostCMD(this));
         registerListeners(new PlayerMoveListener(this),
@@ -42,7 +42,7 @@ public final class EventsPlugin extends JavaPlugin {
 
     }
 
-    public EventManager getEventManager() {
+    public GameManager getEventManager() {
         return eventManager;
     }
 

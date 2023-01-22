@@ -1,15 +1,13 @@
-package fr.iban.events;
+package fr.iban.events.games;
 
-import fr.iban.bukkitcore.rewards.RewardsDAO;
 import fr.iban.common.teleport.SLocation;
-import fr.iban.events.enums.EventType;
-import fr.iban.events.enums.GameState;
+import fr.iban.events.EventsPlugin;
+import fr.iban.events.enums.GameType;
 import fr.iban.events.interfaces.MoveBlockListener;
 import fr.iban.events.interfaces.PlayerDamageListener;
 import fr.iban.events.options.LocationOption;
 import fr.iban.events.options.Option;
 import org.bukkit.*;
-import org.bukkit.Note.Tone;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -17,21 +15,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.*;
 
-public class JumpEvent extends Event implements MoveBlockListener, PlayerDamageListener {
+public class DropperGame extends Game implements MoveBlockListener, PlayerDamageListener {
 
     private final Map<UUID, Location> checkpoints = new HashMap<>();
+    private final Map<UUID, Integer> maps = new HashMap<>();
     private boolean finished = false;
 
-    public JumpEvent(EventsPlugin plugin) {
+    public DropperGame(EventsPlugin plugin) {
         super(plugin);
-    }
-
-    public static List<Option> getArenaOptions() {
-        List<Option> list = new ArrayList<>();
-        list.add(new LocationOption("waiting-location"));
-        list.add(new LocationOption("game-start-location"));
-        list.add(new LocationOption("game-end-location"));
-        return list;
+        getConfig().setPvp(true);
     }
 
     @Override
@@ -43,8 +35,30 @@ public class JumpEvent extends Event implements MoveBlockListener, PlayerDamageL
             player.setCollidable(false);
             player.teleport(getStartPoint());
             player.sendTitle("§l§2Bonne chance ! ", "§aQue le meilleur gagné !", 10, 70, 20);
-            player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.flat(1, Tone.A));
+            player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.flat(1, Note.Tone.A));
+            maps.put(player.getUniqueId(), 1);
         }
+    }
+
+    public static List<Option> getArenaOptions() {
+        List<Option> list = new ArrayList<>();
+        list.add(new LocationOption("waiting-location"));
+        list.add(new LocationOption("game-start-location"));
+        list.add(new LocationOption("map1"));
+        list.add(new LocationOption("map2"));
+        list.add(new LocationOption("map3"));
+        list.add(new LocationOption("game-end-location"));
+        return list;
+    }
+
+    @Override
+    public boolean isNotFinished() {
+        return !finished;
+    }
+
+    public Location getMapLocation(int i) {
+        LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(1+i);
+        return locopt.getLocationValue();
     }
 
     @Override
@@ -60,7 +74,7 @@ public class JumpEvent extends Event implements MoveBlockListener, PlayerDamageL
     }
 
     public Location getEndPoint() {
-        LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(2);
+        LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(5);
         return locopt.getLocationValue();
     }
 
@@ -71,13 +85,8 @@ public class JumpEvent extends Event implements MoveBlockListener, PlayerDamageL
     }
 
     @Override
-    public boolean isFinished() {
-        return finished;
-    }
-
-    @Override
-    public EventType getType() {
-        return EventType.JUMP;
+    public GameType getType() {
+        return GameType.DROPPER;
     }
 
     @Override
@@ -89,50 +98,31 @@ public class JumpEvent extends Event implements MoveBlockListener, PlayerDamageL
         if (toBlock.getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE) {
             if (!getCheckPoint(player).getBlock().getLocation().equals(toBlock.getLocation())) {
                 checkpoints.put(player.getUniqueId(), toBlock.getLocation());
+                int map = maps.get(player.getUniqueId());
+                maps.replace(player.getUniqueId(), map, map+1);
                 player.sendMessage("§aVous avez atteint un checkpoint.");
             }
         }
 
-        if (to.distanceSquared(getEndPoint()) <= 1) {
-
-            if (!isFinished()) {
-                if (winReward != null) {
-                    RewardsDAO.addRewardAsync(player.getUniqueId().toString(), winReward.getName(), winReward.getServer(), winReward.getCommand());
-                    Bukkit.getPlayer(player.getUniqueId()).sendMessage("§aVous avez reçu une récompense pour votre victoire ! (/recompenses)");
-                }
-                winners.add(player.getUniqueId());
-                finished = true;
-            }
-
-            for (Player p : getViewers(250)) {
-                p.sendMessage("§2§l" + player.getName() + " a atteint l'arrivée !");
-            }
-            removePlayer(player.getUniqueId());
-            if (players.isEmpty()) {
-                finish();
-            }
-
+        if(toBlock.getLocation().getY() <= 10) {
+            int map = maps.get(player.getUniqueId());
+            Location loc = getMapLocation(map+1);
+            player.teleport(loc);
         }
 
-        if (player.getFallDistance() >= 10) {
-            player.teleport(getCheckPoint(player));
-        }
     }
 
     @Override
-    public void finish() {
-        setGameState(GameState.FINISHED);
-
-        manager.killEvent(this);
+    public void onPlayerDamage(EntityDamageEvent e) {
+        Player p = (Player) e.getEntity();
+        if(e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
+            int map = maps.get(p.getUniqueId());
+            Location loc = getMapLocation(map);
+            p.teleport(loc);
+        }
     }
 
     private Location getCheckPoint(Player player) {
         return checkpoints.getOrDefault(player.getUniqueId(), getStartPoint());
     }
-
-    @Override
-    public void onPlayerDamage(EntityDamageEvent e) {
-        e.setCancelled(true);
-    }
-
 }

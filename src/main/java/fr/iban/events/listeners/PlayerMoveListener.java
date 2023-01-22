@@ -1,6 +1,6 @@
 package fr.iban.events.listeners;
 
-import fr.iban.events.Event;
+import fr.iban.events.games.Game;
 import fr.iban.events.EventsPlugin;
 import fr.iban.events.interfaces.MoveBlockListener;
 import org.bukkit.Location;
@@ -29,10 +29,10 @@ public class PlayerMoveListener implements Listener {
 
         if (x == 0 && y == 0 && z == 0) return;
 
-        Event event = plugin.getEventManager().getPlayingEvent(player);
+        Game game = plugin.getEventManager().getPlayingGame(player);
 
-        if (event instanceof MoveBlockListener) {
-            ((MoveBlockListener) event).onMoveBlock(e);
+        if (game instanceof MoveBlockListener) {
+            ((MoveBlockListener) game).onMoveBlock(e);
         }
     }
 

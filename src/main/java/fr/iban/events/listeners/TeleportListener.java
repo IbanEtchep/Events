@@ -1,15 +1,15 @@
 package fr.iban.events.listeners;
 
-import fr.iban.events.EventManager;
+import fr.iban.events.GameManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class TeleportListener implements Listener {
 
-    private final EventManager manager;
+    private final GameManager manager;
 
-    public TeleportListener(EventManager manager) {
+    public TeleportListener(GameManager manager) {
         this.manager = manager;
     }
 

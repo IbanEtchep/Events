@@ -3,8 +3,8 @@ package fr.iban.events.menus;
 import fr.iban.bukkitcore.CoreBukkitPlugin;
 import fr.iban.bukkitcore.menu.Menu;
 import fr.iban.bukkitcore.utils.ItemBuilder;
-import fr.iban.events.EventManager;
-import fr.iban.events.enums.EventType;
+import fr.iban.events.GameManager;
+import fr.iban.events.enums.GameType;
 import fr.iban.events.options.IntOption;
 import fr.iban.events.options.LocationOption;
 import fr.iban.events.options.Option;
@@ -21,13 +21,13 @@ import java.util.Map;
 
 public class ArenaEditor extends Menu {
 
-    private final EventManager manager;
-    private final EventType type;
+    private final GameManager manager;
+    private final GameType type;
     private final String name;
     private final List<Option> options;
     private final Map<Integer, Option> optionAtSlot = new HashMap<>();
 
-    public ArenaEditor(Player player, EventType type, String name, EventManager manager) {
+    public ArenaEditor(Player player, GameType type, String name, GameManager manager) {
         super(player);
         this.type = type;
         this.name = name;

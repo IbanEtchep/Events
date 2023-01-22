@@ -1,12 +1,11 @@
 package fr.iban.events;
 
-import fr.iban.events.enums.EventType;
-import fr.iban.events.enums.GameState;
+import fr.iban.events.enums.GameType;
+import fr.iban.events.games.*;
 import fr.iban.events.options.IntOption;
 import fr.iban.events.options.LocationOption;
 import fr.iban.events.options.Option;
 import fr.iban.events.options.StringOption;
-import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -15,20 +14,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class EventManager {
+public class GameManager {
 
 
-    private final List<Event> runningEvents = new ArrayList<>();
+    private final List<Game> runningGames = new ArrayList<>();
     private final EventsPlugin plugin;
     private final FileConfiguration config;
 
-    public EventManager(EventsPlugin plugin) {
+    public GameManager(EventsPlugin plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
+        registerGameHandlers();
     }
 
-    public List<Event> getRunningEvents() {
-        return runningEvents;
+    private void registerGameHandlers() {
+        GameType.JUMP.registerHandler(() -> new JumpGame(plugin));
+        GameType.DROPPER.registerHandler(() -> new DropperGame(plugin));
+        GameType.TNTRUN.registerHandler(() -> new TNTRunGame(plugin));
+        GameType.SUMOTORI.registerHandler(() -> new SumotoriGame(plugin));
+    }
+
+    public List<Game> getRunningEvents() {
+        return runningGames;
     }
 
     /**
@@ -38,8 +45,8 @@ public class EventManager {
      * @param arena - nom de l'arene
      * @return - si l'event est en cours.
      */
-    public boolean isRunning(EventType type, String arena) {
-        return !runningEvents.isEmpty() && !getAvalaibleArenas(type).contains(arena);
+    public boolean isRunning(GameType type, String arena) {
+        return !runningGames.isEmpty() && !getAvalaibleArenas(type).contains(arena);
     }
 
     /**
@@ -48,22 +55,18 @@ public class EventManager {
      * @param type   - type d'evenement.
      * @param player - joueur qui hoste la partie.
      */
-    public void runEvent(EventType type, Player player, String arena) {
-        Event event = null;
-        switch (type) {
-            case SUMOTORI -> event = new SumotoriEvent(plugin);
-            case JUMP -> event = new JumpEvent(plugin);
-            case TNTRUN -> event = new TNTRunEvent(plugin);
-            case DROPPER -> event = new DropperEvent(plugin);
-        }
-        if (event != null) {
-            runningEvents.add(event);
-            event.prepare(player, arena);
+    public void runEvent(GameType type, Player player, String arena) {
+        Game game = type.getNewHandler();
+        if (game != null) {
+            runningGames.add(game);
+            game.prepare(player, arena);
+        } else {
+            player.sendMessage("§cNo game handler found.");
         }
     }
 
-    public void killEvent(Event event) {
-        getRunningEvents().remove(event);
+    public void killEvent(Game game) {
+        getRunningEvents().remove(game);
         System.out.println(getRunningEvents().size());
     }
 
@@ -73,22 +76,9 @@ public class EventManager {
      * @return - event
      */
     public boolean isPlaying(Player player) {
-        return getPlayingEvent(player) != null;
+        return getPlayingGame(player) != null;
     }
 
-
-    public void joinEvent(Player player, Event event) {
-
-        if (event == null
-                || player.getGameMode() == GameMode.CREATIVE
-                || player.getGameMode() == GameMode.SPECTATOR
-                || isPlaying(player)
-                || event.getGameState() == GameState.RUNNING) {
-            return;
-        }
-
-        event.addPlayer(player.getUniqueId());
-    }
 
     /**
      * Renvois l'event auquel le joueur joue actuellement.
@@ -96,11 +86,11 @@ public class EventManager {
      * @return - event ou null si non trouvé.
      */
     @Nullable
-    public Event getPlayingEvent(Player player) {
-        for (Event event : runningEvents) {
-            for (UUID uuid : event.getPlayers()) {
+    public Game getPlayingGame(Player player) {
+        for (Game game : runningGames) {
+            for (UUID uuid : game.getPlayers()) {
                 if (uuid.toString().equals(player.getUniqueId().toString())) {
-                    return event;
+                    return game;
                 }
             }
         }
@@ -108,18 +98,18 @@ public class EventManager {
     }
 
     @Nullable
-    public Event getNearestEvent(Player player) {
-        Event event = null;
-        for (Event ev : runningEvents) {
+    public Game getNearestEvent(Player player) {
+        Game game = null;
+        for (Game ev : runningGames) {
             double evDistance = ev.getWaitingSpawnPoint().distanceSquared(player.getLocation());
-            if (evDistance < 10000 && (event == null || evDistance < event.getWaitingSpawnPoint().distanceSquared(player.getLocation()))) {
-                event = ev;
+            if (evDistance < 10000 && (game == null || evDistance < game.getWaitingSpawnPoint().distanceSquared(player.getLocation()))) {
+                game = ev;
             }
         }
-        return event;
+        return game;
     }
 
-    public List<String> getArenaNames(EventType type) {
+    public List<String> getArenaNames(GameType type) {
         List<String> list = new ArrayList<>();
         if (config.getConfigurationSection(type.toString().toLowerCase()) != null) {
             list.addAll(config.getConfigurationSection(type.toString().toLowerCase()).getKeys(false));
@@ -127,16 +117,16 @@ public class EventManager {
         return list;
     }
 
-    public List<String> getAvalaibleArenas(EventType type) {
+    public List<String> getAvalaibleArenas(GameType type) {
         List<String> list = getArenaNames(type);
         //On enlève les arènes en cours d'utilisation.
-        for (Event event : runningEvents.stream().filter(e -> e.getType() == type).toList()) {
-            list.remove(event.getArena());
+        for (Game game : runningGames.stream().filter(e -> e.getType() == type).toList()) {
+            list.remove(game.getArena());
         }
         return list;
     }
 
-    public List<Option> getArenaOptions(EventType event, String arenaName) {
+    public List<Option> getArenaOptions(GameType event, String arenaName) {
         List<Option> list = new ArrayList<>();
         String path = event.toString().toLowerCase() + "." + arenaName + ".";
         for (Option option : event.getArenaOptions()) {
@@ -152,7 +142,7 @@ public class EventManager {
         return list;
     }
 
-    public void saveArenaOption(EventType type, String arenaName, Option option) {
+    public void saveArenaOption(GameType type, String arenaName, Option option) {
         String path = type.toString().toLowerCase() + "." + arenaName + "." + option.getName();
         if (option instanceof IntOption) {
             config.set(path, ((IntOption) option).getIntValue());
@@ -163,12 +153,12 @@ public class EventManager {
         }
     }
 
-    public void addArena(EventType type, String arenaName) {
+    public void addArena(GameType type, String arenaName) {
         String path = type.toString().toLowerCase() + "." + arenaName;
         config.createSection(path);
     }
 
-    public void deleteArena(EventType type, String arenaName) {
+    public void deleteArena(GameType type, String arenaName) {
         String path = type.toString().toLowerCase() + "." + arenaName;
         config.set(path, null);
     }

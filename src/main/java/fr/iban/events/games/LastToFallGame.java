@@ -1,6 +1,7 @@
-package fr.iban.events;
+package fr.iban.events.games;
 
 import fr.iban.common.teleport.SLocation;
+import fr.iban.events.EventsPlugin;
 import fr.iban.events.enums.GameState;
 import fr.iban.events.interfaces.MoveBlockListener;
 import fr.iban.events.options.IntOption;
@@ -14,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class LastToFallEvent extends Event implements MoveBlockListener {
+public abstract class LastToFallGame extends Game implements MoveBlockListener {
 
-    public LastToFallEvent(EventsPlugin plugin) {
+    public LastToFallGame(EventsPlugin plugin) {
         super(plugin);
     }
 
@@ -29,16 +30,12 @@ public abstract class LastToFallEvent extends Event implements MoveBlockListener
     }
 
     @Override
-    public void start() {
-        super.start();
-
-        for (UUID uuid : players) {
-            Player player = Bukkit.getPlayer(uuid);
-            player.teleport(getStartPoint());
-            player.sendTitle("§l§2Bonne chance ! ", "§aQue le meilleur gagné !", 10, 70, 20);
-            player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.flat(1, Note.Tone.A));
-            player.setGameMode(GameMode.ADVENTURE);
-        }
+    public void handlePlayerGameJoin(Player player) {
+        super.handlePlayerGameJoin(player);
+        player.teleport(getStartPoint());
+        player.sendTitle("§l§2Bonne chance ! ", "§aQue le meilleur gagné !", 10, 70, 20);
+        player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.flat(1, Note.Tone.A));
+        player.setGameMode(GameMode.ADVENTURE);
     }
 
     @Override
@@ -80,16 +77,15 @@ public abstract class LastToFallEvent extends Event implements MoveBlockListener
     public void onMoveBlock(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         if (e.getTo().getY() < getDeathHeight()) {
-            removePlayer(player.getUniqueId());
+            removePlayer(player);
         }
     }
 
     @Override
-    public void removePlayer(UUID uuid) {
-        super.removePlayer(uuid);
-        Player player = Bukkit.getPlayer(uuid);
+    public void removePlayer(Player player) {
+        super.removePlayer(player);
         if (state == GameState.RUNNING) {
-            if (!isFinished()) {
+            if (isNotFinished()) {
                 for (Player p : getViewers(50)) {
                     p.sendMessage("§7" + player.getName() + " est éliminé ! Plus que " + getPlayers().size() + " joueurs restants.");
                 }
@@ -100,8 +96,8 @@ public abstract class LastToFallEvent extends Event implements MoveBlockListener
     }
 
     @Override
-    public boolean isFinished() {
-        return getPlayers().size() <= 1;
+    public boolean isNotFinished() {
+        return getPlayers().size() > 1;
     }
 
 }

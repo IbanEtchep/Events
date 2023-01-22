@@ -1,6 +1,7 @@
-package fr.iban.events;
+package fr.iban.events.games;
 
-import fr.iban.events.enums.EventType;
+import fr.iban.events.EventsPlugin;
+import fr.iban.events.enums.GameType;
 import fr.iban.events.enums.GameState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,17 +13,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class TNTRunEvent extends LastToFallEvent {
+public class TNTRunGame extends LastToFallGame {
 
     private final Map<Location, Material> brokenBlocks = new HashMap<>();
 
-    public TNTRunEvent(EventsPlugin plugin) {
+    public TNTRunGame(EventsPlugin plugin) {
         super(plugin);
     }
 
     @Override
-    public EventType getType() {
-        return EventType.TNTRUN;
+    public GameType getType() {
+        return GameType.TNTRUN;
     }
 
     @Override
@@ -59,9 +60,7 @@ public class TNTRunEvent extends LastToFallEvent {
     @Override
     public void finish() {
         super.finish();
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            regenArena();
-        }, 60L);
+        Bukkit.getScheduler().runTaskLater(plugin, this::regenArena, 60L);
     }
 
     private void regenArena() {
