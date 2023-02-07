@@ -19,10 +19,10 @@ public enum GameType {
 
     private final String name;
     private final String desc;
-    private final List<Option> arenaOptions;
+    private final List<Option<?>> arenaOptions;
     private Supplier<Game> gameSupplier;
 
-    GameType(String name, String desc, List<Option> arenaOptions) {
+    GameType(String name, String desc, List<Option<?>> arenaOptions) {
         this.name = name;
         this.desc = desc;
         this.arenaOptions = arenaOptions;
@@ -36,7 +36,7 @@ public enum GameType {
         return desc;
     }
 
-    public List<Option> getArenaOptions() {
+    public List<Option<?>> getArenaOptions() {
         return arenaOptions;
     }
 

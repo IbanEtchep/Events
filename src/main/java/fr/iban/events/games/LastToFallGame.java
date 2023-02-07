@@ -21,8 +21,8 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
         super(plugin);
     }
 
-    public static List<Option> getArenaOptions() {
-        List<Option> list = new ArrayList<>();
+    public static List<Option<?>> getArenaOptions() {
+        List<Option<?>> list = new ArrayList<>();
         list.add(new LocationOption("game-start-location"));
         list.add(new LocationOption("waiting-location"));
         list.add(new IntOption("death-height", 50));
@@ -42,7 +42,7 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
     public void finish() {
         state = GameState.FINISHED;
         if(!getPlayers().isEmpty()){
-            UUID winner = getPlayers().get(0);
+            UUID winner = getPlayers().stream().findFirst().orElseThrow();
             winners.add(winner);
             for (Player p : getViewers(50)) {
                 p.sendMessage("§2§lLa partie est terminée, " + Bukkit.getPlayer(winner).getName() + " a gagné !");
@@ -54,7 +54,7 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
     @Override
     public Location getWaitingSpawnPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(1);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     @Override
@@ -66,11 +66,11 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
     @Override
     public Location getStartPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(0);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     public int getDeathHeight() {
-        return ((IntOption) manager.getArenaOptions(getType(), getArena()).get(2)).getIntValue();
+        return ((IntOption) manager.getArenaOptions(getType(), getArena()).get(2)).getValue();
     }
 
     @Override

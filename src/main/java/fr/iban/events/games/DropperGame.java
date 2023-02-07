@@ -32,7 +32,7 @@ public class DropperGame extends Game implements MoveBlockListener, PlayerDamage
 
         for (UUID uuid : players) {
             Player player = Bukkit.getPlayer(uuid);
-            player.setCollidable(false);
+            if(player == null) continue;
             player.teleport(getStartPoint());
             player.sendTitle("§l§2Bonne chance ! ", "§aQue le meilleur gagné !", 10, 70, 20);
             player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.flat(1, Note.Tone.A));
@@ -40,8 +40,8 @@ public class DropperGame extends Game implements MoveBlockListener, PlayerDamage
         }
     }
 
-    public static List<Option> getArenaOptions() {
-        List<Option> list = new ArrayList<>();
+    public static List<Option<?>> getArenaOptions() {
+        List<Option<?>> list = new ArrayList<>();
         list.add(new LocationOption("waiting-location"));
         list.add(new LocationOption("game-start-location"));
         list.add(new LocationOption("map1"));
@@ -58,24 +58,24 @@ public class DropperGame extends Game implements MoveBlockListener, PlayerDamage
 
     public Location getMapLocation(int i) {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(1+i);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     @Override
     public Location getWaitingSpawnPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(0);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     @Override
     public Location getStartPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(1);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     public Location getEndPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(5);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     @Override

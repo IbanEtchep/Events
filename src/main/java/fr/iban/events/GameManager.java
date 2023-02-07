@@ -2,24 +2,21 @@ package fr.iban.events;
 
 import fr.iban.events.enums.GameType;
 import fr.iban.events.games.*;
-import fr.iban.events.options.IntOption;
-import fr.iban.events.options.LocationOption;
-import fr.iban.events.options.Option;
-import fr.iban.events.options.StringOption;
+import fr.iban.events.options.*;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class GameManager {
 
 
-    private final List<Game> runningGames = new ArrayList<>();
     private final EventsPlugin plugin;
     private final FileConfiguration config;
+    private final List<Game> runningGames = new ArrayList<>();
 
     public GameManager(EventsPlugin plugin) {
         this.plugin = plugin;
@@ -67,11 +64,10 @@ public class GameManager {
 
     public void killEvent(Game game) {
         getRunningEvents().remove(game);
-        System.out.println(getRunningEvents().size());
     }
 
     /**
-     * Vérifie si un joueur est entrain de jouer à un event.
+     * Vérifie si un joueur est en train de jouer à un event.
      *
      * @return - event
      */
@@ -88,10 +84,8 @@ public class GameManager {
     @Nullable
     public Game getPlayingGame(Player player) {
         for (Game game : runningGames) {
-            for (UUID uuid : game.getPlayers()) {
-                if (uuid.toString().equals(player.getUniqueId().toString())) {
-                    return game;
-                }
+            if(game.getPlayers().contains(player.getUniqueId())) {
+                return game;
             }
         }
         return null;
@@ -102,7 +96,8 @@ public class GameManager {
         Game game = null;
         for (Game ev : runningGames) {
             double evDistance = ev.getWaitingSpawnPoint().distanceSquared(player.getLocation());
-            if (evDistance < 10000 && (game == null || evDistance < game.getWaitingSpawnPoint().distanceSquared(player.getLocation()))) {
+            if (evDistance < 10000 &&
+                    (game == null || evDistance < game.getWaitingSpawnPoint().distanceSquared(player.getLocation()))) {
                 game = ev;
             }
         }
@@ -111,8 +106,9 @@ public class GameManager {
 
     public List<String> getArenaNames(GameType type) {
         List<String> list = new ArrayList<>();
-        if (config.getConfigurationSection(type.toString().toLowerCase()) != null) {
-            list.addAll(config.getConfigurationSection(type.toString().toLowerCase()).getKeys(false));
+        ConfigurationSection section = config.getConfigurationSection(type.toString().toLowerCase());
+        if (section != null) {
+            list.addAll(section.getKeys(false));
         }
         return list;
     }
@@ -126,30 +122,34 @@ public class GameManager {
         return list;
     }
 
-    public List<Option> getArenaOptions(GameType event, String arenaName) {
-        List<Option> list = new ArrayList<>();
+    public List<Option<?>> getArenaOptions(GameType event, String arenaName) {
+        List<Option<?>> list = new ArrayList<>();
         String path = event.toString().toLowerCase() + "." + arenaName + ".";
-        for (Option option : event.getArenaOptions()) {
+        for (Option<?> option : event.getArenaOptions()) {
             list.add(option);
-            if (option instanceof IntOption) {
-                ((IntOption) option).setIntValue(config.getInt(path + option.getName()));
-            } else if (option instanceof StringOption) {
-                ((StringOption) option).setStringValue(config.getString(path + option.getName()));
-            } else if (option instanceof LocationOption) {
-                ((LocationOption) option).setLocationValue(config.getLocation(path + option.getName()));
+            if (option instanceof IntOption intOption) {
+                intOption.setValue(config.getInt(path + option.getName()));
+            } else if (option instanceof StringOption stringOption) {
+                stringOption.setValue(config.getString(path + option.getName()));
+            } else if (option instanceof LocationOption locationOption) {
+                locationOption.setValue(config.getLocation(path + option.getName()));
             }
         }
         return list;
     }
 
-    public void saveArenaOption(GameType type, String arenaName, Option option) {
+    public void saveArenaOption(GameType type, String arenaName, Option<?> option) {
         String path = type.toString().toLowerCase() + "." + arenaName + "." + option.getName();
-        if (option instanceof IntOption) {
-            config.set(path, ((IntOption) option).getIntValue());
-        } else if (option instanceof StringOption) {
-            config.set(path, ((StringOption) option).getStringValue());
-        } else if (option instanceof LocationOption) {
-            config.set(path, ((LocationOption) option).getLocationValue());
+        if (option instanceof IntOption intOption) {
+            config.set(path, intOption.getValue());
+        } else if (option instanceof StringOption stringOption) {
+            config.set(path, stringOption.getValue());
+        } else if (option instanceof LocationOption locationOption) {
+            config.set(path, locationOption.getValue());
+        } else if (option instanceof LocationListOption locationListOption) {
+            config.set(path, locationListOption.getValue());
+        } else if (option instanceof CuboidListOption cuboidListOption) {
+            config.set(path, cuboidListOption.getValue());
         }
     }
 

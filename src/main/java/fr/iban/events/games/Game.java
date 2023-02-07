@@ -22,13 +22,13 @@ import java.util.*;
 public abstract class Game {
 
     protected UUID host;
-    protected List<UUID> players = new ArrayList<>();
-    protected List<UUID> winners = new ArrayList<>();
+    protected Set<UUID> players = new HashSet<>();
+    protected Set<UUID> winners = new HashSet<>();
     protected Menu menu;
     protected GameState state = GameState.WAITING;
     protected GameManager manager;
     protected EventsPlugin plugin;
-    protected GameConfig gameConfig;
+    protected GameConfig gameConfig = new GameConfig("default");
     private String arena;
 
 
@@ -122,7 +122,7 @@ public abstract class Game {
         player.teleport(getWaitingSpawnPoint());
     }
 
-    public List<UUID> getPlayers() {
+    public Set<UUID> getPlayers() {
         return players;
     }
 

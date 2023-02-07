@@ -28,8 +28,8 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
         super(plugin);
     }
 
-    public static List<Option> getArenaOptions() {
-        List<Option> list = new ArrayList<>();
+    public static List<Option<?>> getArenaOptions() {
+        List<Option<?>> list = new ArrayList<>();
         list.add(new LocationOption("waiting-location"));
         list.add(new LocationOption("game-start-location"));
         list.add(new LocationOption("game-end-location"));
@@ -46,18 +46,18 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
     @Override
     public Location getWaitingSpawnPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(0);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     @Override
     public Location getStartPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(1);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     public Location getEndPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(2);
-        return locopt.getLocationValue();
+        return locopt.getValue();
     }
 
     @Override
@@ -119,7 +119,6 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
     @Override
     public void finish() {
         setGameState(GameState.FINISHED);
-
         manager.killEvent(this);
     }
 

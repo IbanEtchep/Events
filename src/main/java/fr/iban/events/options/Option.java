@@ -1,12 +1,10 @@
 package fr.iban.events.options;
 
-import fr.iban.events.enums.OptionType;
-
-public abstract class Option {
+public abstract class Option<T> {
 
 
-    protected OptionType type;
     private final String name;
+    protected T value;
 
     public Option(String name) {
         this.name = name;
@@ -16,9 +14,11 @@ public abstract class Option {
         return name;
     }
 
-    public OptionType getType() {
-        return type;
+    public void setValue(T value) {
+        this.value = value;
     }
 
-
+    public T getValue() {
+        return value;
+    }
 }

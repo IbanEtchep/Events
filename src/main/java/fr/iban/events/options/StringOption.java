@@ -1,27 +1,16 @@
 package fr.iban.events.options;
 
-public class StringOption extends Option {
-
-    private String stringValue;
+public class StringOption extends Option<String> {
 
 
     public StringOption(String name, String defaultValue) {
         super(name);
-        stringValue = defaultValue;
+        value = defaultValue;
     }
 
     public StringOption(String name) {
         super(name);
-        stringValue = "nd";
-    }
-
-
-    public String getStringValue() {
-        return stringValue;
-    }
-
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
+        value = "nd";
     }
 
 }

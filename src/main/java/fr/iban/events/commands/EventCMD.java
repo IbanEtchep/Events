@@ -3,7 +3,7 @@ package fr.iban.events.commands;
 import fr.iban.events.GameManager;
 import fr.iban.events.EventsPlugin;
 import fr.iban.events.enums.GameType;
-import fr.iban.events.menus.ArenaEditor;
+import fr.iban.events.menus.OptionsEditor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -55,7 +55,7 @@ public class EventCMD implements CommandExecutor, TabCompleter {
                                 }
                             } else if (args[1].equalsIgnoreCase("edit")) {
                                 if (manager.getArenaNames(type).contains(name)) {
-                                    new ArenaEditor(player, type, name, manager).open();
+                                    new OptionsEditor(player, type, name, manager).open();
                                 } else {
                                     player.sendMessage("§cCette arene n'éxiste pas.");
                                 }
