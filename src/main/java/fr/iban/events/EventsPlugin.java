@@ -24,13 +24,13 @@ public final class EventsPlugin extends JavaPlugin {
         saveDefaultConfig();
 
         Plugin worldEditPlugin = Bukkit.getPluginManager().getPlugin("WorldEdit");
-        if(worldEditPlugin instanceof WorldEditPlugin worldedit) {
+        if (worldEditPlugin instanceof WorldEditPlugin worldedit) {
             this.worldEditPlugin = worldedit;
             getLogger().info("Hooked into worldedit.");
         }
 
         Plugin iceRacePlugin = Bukkit.getPluginManager().getPlugin("IceRace");
-        if(iceRacePlugin instanceof IceRacePlugin iceRace) {
+        if (iceRacePlugin instanceof IceRacePlugin iceRace) {
             this.iceRacePlugin = iceRace;
             getLogger().info("Hooked into IceRace.");
         }
@@ -43,7 +43,9 @@ public final class EventsPlugin extends JavaPlugin {
                 new TeleportListener(gameManager),
                 new DamageListeners(gameManager),
                 new JoinQuitListeners(gameManager),
-                new FoodListener()
+                new FoodListener(),
+                new ProjectileDamageListener(gameManager),
+                new ArmorListener(this)
         );
     }
 

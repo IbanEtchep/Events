@@ -29,6 +29,8 @@ public class GameManager {
         GameType.DROPPER.registerHandler(() -> new DropperGame(plugin));
         GameType.TNTRUN.registerHandler(() -> new TNTRunGame(plugin));
         GameType.SUMOTORI.registerHandler(() -> new SumotoriGame(plugin));
+        GameType.SNOWBATTLE.registerHandler(() -> new SnowBattleGame(plugin));
+        GameType.PITCHOUT.registerHandler(() -> new PitchOutGame(plugin));
         if(plugin.getIceRacePlugin() != null) {
             GameType.ICERACE.registerHandler(() -> new IceRaceGame(plugin));
         }
