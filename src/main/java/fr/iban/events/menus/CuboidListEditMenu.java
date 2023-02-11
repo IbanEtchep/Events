@@ -3,7 +3,6 @@ package fr.iban.events.menus;
 import fr.iban.bukkitcore.utils.ItemBuilder;
 import fr.iban.events.utils.Cuboid;
 import fr.iban.menuapi.menuitem.MenuItem;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -21,10 +20,9 @@ public class CuboidListEditMenu extends ListEditMenu<Cuboid> {
 
     @Override
     public MenuItem getMenuItem(Cuboid cuboid) {
-        Location pos1 = cuboid.getLowerNE();
-        Location pos2 = cuboid.getUpperSW();
         ItemStack item = new ItemBuilder(Material.PAPER).setName("Position")
                 .addLore(cuboid.toString())
+                .addLore("§cClic droit pour supprimer")
                 .build();
         return new MenuItem(-1, item).setClickCallback(click -> {
             if(click.getClick() == ClickType.RIGHT) {

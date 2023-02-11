@@ -25,6 +25,7 @@ public class LocationListEditMenu extends ListEditMenu<Location> {
                 .addLore("X :" + loc.getX())
                 .addLore("Y :" + loc.getY())
                 .addLore("Z :" + loc.getZ())
+                .addLore("§cClic droit pour supprimer")
                 .build();
         return new MenuItem(-1, item).setClickCallback(click -> {
             if(click.getClick() == ClickType.RIGHT) {

@@ -49,7 +49,6 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
         return locopt.getValue();
     }
 
-    @Override
     public Location getStartPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(1);
         return locopt.getValue();
@@ -58,12 +57,6 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
     public Location getEndPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(2);
         return locopt.getValue();
-    }
-
-    @Override
-    public SLocation getWaitSLocation() {
-        Location loc = getWaitingSpawnPoint();
-        return new SLocation("Events", loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw());
     }
 
     @Override

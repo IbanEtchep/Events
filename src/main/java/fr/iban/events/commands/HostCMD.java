@@ -16,13 +16,12 @@ public class HostCMD implements CommandExecutor {
 
     public HostCMD(EventsPlugin plugin) {
         //this.plugin = plugin;
-        this.manager = plugin.getEventManager();
+        this.manager = plugin.getGameManager();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             if (args.length == 0 && !manager.getRunningEvents().isEmpty()) {
                 for (Game game : manager.getRunningEvents()) {
                     if (game.getHost().equals(player.getUniqueId())) {

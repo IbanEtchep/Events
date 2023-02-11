@@ -30,7 +30,7 @@ public class JoinQuitListeners implements Listener {
         Player player = e.getPlayer();
         Game game = manager.getPlayingGame(player);
         if (game != null) {
-            game.removePlayer(player);
+            game.removePlayer(player, false);
         }
     }
 

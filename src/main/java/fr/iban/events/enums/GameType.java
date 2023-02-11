@@ -1,9 +1,6 @@
 package fr.iban.events.enums;
 
-import fr.iban.events.games.DropperGame;
-import fr.iban.events.games.Game;
-import fr.iban.events.games.JumpGame;
-import fr.iban.events.games.LastToFallGame;
+import fr.iban.events.games.*;
 import fr.iban.events.options.Option;
 
 import java.util.List;
@@ -15,7 +12,8 @@ public enum GameType {
     JUMP("Jump", "L'objectif est de bondir d'obstacle en obstacle pour arriver en haut le premier !", JumpGame.getArenaOptions()),
     SPEEF("Spleef", "Equipé d'une pelle, vous devrez faire tomber vos adversaires dans le vide !", LastToFallGame.getArenaOptions()),
     TNTRUN("TNT-Run", "Les blocs sur lesquels vous marchez tombent, soyez le dernier à subsister sur la plateforme !", LastToFallGame.getArenaOptions()),
-    DROPPER("Dropper", "L'objectif est de sauter au coeur de la map et d'atteindre un espace restreint pour passer a la map suivante !", DropperGame.getArenaOptions());
+    DROPPER("Dropper", "L'objectif est de sauter au coeur de la map et d'atteindre un espace restreint pour passer a la map suivante !", DropperGame.getArenaOptions()),
+    ICERACE("IceRace", "Course de bateau sur glace !", IceRaceGame.getArenaOptions());
 
     private final String name;
     private final String desc;
@@ -45,6 +43,9 @@ public enum GameType {
     }
 
     public Game getNewHandler() {
+        if(gameSupplier == null) {
+            return null;
+        }
         return gameSupplier.get();
     }
 

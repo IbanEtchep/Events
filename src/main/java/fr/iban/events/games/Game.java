@@ -10,6 +10,8 @@ import fr.iban.events.GameManager;
 import fr.iban.events.enums.GameType;
 import fr.iban.events.enums.GameState;
 import fr.iban.events.menus.ConfigMenu;
+import fr.iban.events.options.IntOption;
+import fr.iban.events.options.Option;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -22,6 +24,7 @@ import java.util.*;
 public abstract class Game {
 
     protected UUID host;
+    protected HashMap<String, Option<?>> cachedArenaOptions;
     protected Set<UUID> players = new HashSet<>();
     protected Set<UUID> winners = new HashSet<>();
     protected Menu menu;
@@ -29,12 +32,12 @@ public abstract class Game {
     protected GameManager manager;
     protected EventsPlugin plugin;
     protected GameConfig gameConfig = new GameConfig("default");
-    private String arena;
+    protected String arena;
 
 
     public Game(EventsPlugin plugin) {
         this.plugin = plugin;
-        this.manager = plugin.getEventManager();
+        this.manager = plugin.getGameManager();
     }
 
 
@@ -43,8 +46,6 @@ public abstract class Game {
     public abstract Location getWaitingSpawnPoint();
 
     public abstract Location getStartPoint();
-
-    public abstract SLocation getWaitSLocation();
 
     public abstract GameType getType();
 
@@ -59,9 +60,7 @@ public abstract class Game {
 
     public void handlePlayerGameJoin(Player player) {
         if (!getPlayers().contains(player.getUniqueId())) {
-            for (Player p : getViewers(50)) {
-                p.sendMessage("§7" + player.getName() + " a rejoint la partie !");
-            }
+            broadCastMessage("§7" + player.getName() + " a rejoint la partie !");
             getPlayers().add(player.getUniqueId());
         }
     }
@@ -79,7 +78,7 @@ public abstract class Game {
 
         for (UUID uuid : winners) {
             Player player = Bukkit.getPlayer(uuid);
-            if(player != null) {
+            if (player != null) {
                 removePlayer(player);
             }
         }
@@ -87,12 +86,10 @@ public abstract class Game {
         manager.killEvent(this);
     }
 
-    public void removePlayer(Player player) {
+    public void removePlayer(Player player, boolean reward) {
         UUID uuid = player.getUniqueId();
         if (state == GameState.WAITING) {
-            for (Player p : getViewers(50)) {
-                p.sendMessage("§7" + player.getName() + " a quitté la partie !");
-            }
+            broadCastMessage("§7" + player.getName() + " a quitté la partie !");
         } else {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).setBaseValue(4);
             player.teleport(getWaitingSpawnPoint());
@@ -110,6 +107,10 @@ public abstract class Game {
             }
         }
         getPlayers().remove(uuid);
+    }
+
+    public void removePlayer(Player player) {
+        removePlayer(player, true);
     }
 
     public void prepare(Player player, String arena) {
@@ -161,4 +162,26 @@ public abstract class Game {
     public GameConfig getConfig() {
         return gameConfig;
     }
+
+    public void broadCastMessage(String message) {
+        for (Player p : getViewers(50)) {
+            p.sendMessage(message);
+        }
+    }
+
+    public SLocation getWaitSLocation() {
+        Location loc = getWaitingSpawnPoint();
+        return new SLocation("Events", loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw());
+    }
+
+    protected Option<?> getOption(String name) {
+        if(cachedArenaOptions == null) {
+            cachedArenaOptions = new HashMap<>();
+            for (Option<?> arenaOption : manager.getArenaOptions(getType(), getArena())) {
+                cachedArenaOptions.put(arenaOption.getName(), arenaOption);
+            }
+        }
+        return cachedArenaOptions.get(name);
+    }
+
 }

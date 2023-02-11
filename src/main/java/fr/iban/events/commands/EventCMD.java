@@ -19,7 +19,7 @@ public class EventCMD implements CommandExecutor, TabCompleter {
 
 
     public EventCMD(EventsPlugin plugin) {
-        this.manager = plugin.getEventManager();
+        this.manager = plugin.getGameManager();
 
     }
 

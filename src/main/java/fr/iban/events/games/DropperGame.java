@@ -100,7 +100,6 @@ public class DropperGame extends Game implements MoveBlockListener, PlayerDamage
                 checkpoints.put(player.getUniqueId(), toBlock.getLocation());
                 int map = maps.get(player.getUniqueId());
                 maps.replace(player.getUniqueId(), map, map+1);
-                player.sendMessage("§aVous avez atteint un checkpoint.");
             }
         }
 

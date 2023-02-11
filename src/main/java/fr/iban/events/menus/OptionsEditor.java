@@ -64,6 +64,7 @@ public class OptionsEditor extends Menu {
                 });
             } else if (option instanceof StringOption stroption) {
                 core.getTextInputs().put(player.getUniqueId(), texte -> {
+                    player.sendMessage("§e§lEntre le texte dans le chat.");
                     stroption.setValue(texte);
                     manager.saveArenaOption(type, name, stroption);
                     player.sendMessage("Option sauvegardée.");

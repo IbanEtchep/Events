@@ -37,6 +37,7 @@ public class ConfigMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) {
         ItemStack item = e.getCurrentItem();
+        if (item == null) return;
         CoreBukkitPlugin core = CoreBukkitPlugin.getInstance();
 
         if (displayNameEquals(item, "§2§lRécompense")) {

@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class LastToFallGame extends Game implements MoveBlockListener {
@@ -43,10 +44,10 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
         state = GameState.FINISHED;
         if(!getPlayers().isEmpty()){
             UUID winner = getPlayers().stream().findFirst().orElseThrow();
+            Player winnerPlayer = Objects.requireNonNull(Bukkit.getPlayer(winner));
             winners.add(winner);
-            for (Player p : getViewers(50)) {
-                p.sendMessage("§2§lLa partie est terminée, " + Bukkit.getPlayer(winner).getName() + " a gagné !");
-            }
+            broadCastMessage("§2§lLa partie est terminée, " + winnerPlayer + " a gagné !");
+
         }
         super.finish();
     }
@@ -63,7 +64,6 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
         return new SLocation("Events", loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw());
     }
 
-    @Override
     public Location getStartPoint() {
         LocationOption locopt = (LocationOption) manager.getArenaOptions(getType(), getArena()).get(0);
         return locopt.getValue();
@@ -86,9 +86,7 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
         super.removePlayer(player);
         if (state == GameState.RUNNING) {
             if (isNotFinished()) {
-                for (Player p : getViewers(50)) {
-                    p.sendMessage("§7" + player.getName() + " est éliminé ! Plus que " + getPlayers().size() + " joueurs restants.");
-                }
+                broadCastMessage("§7" + player.getName() + " est éliminé ! Plus que " + getPlayers().size() + " joueurs restants.");
             } else {
                 finish();
             }

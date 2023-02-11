@@ -29,7 +29,7 @@ public class PlayerMoveListener implements Listener {
 
         if (x == 0 && y == 0 && z == 0) return;
 
-        Game game = plugin.getEventManager().getPlayingGame(player);
+        Game game = plugin.getGameManager().getPlayingGame(player);
 
         if (game instanceof MoveBlockListener) {
             ((MoveBlockListener) game).onMoveBlock(e);
