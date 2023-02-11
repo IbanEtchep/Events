@@ -1,6 +1,6 @@
 package fr.iban.events.enums;
 
-import fr.iban.events.SnowBattleGame;
+import fr.iban.events.games.SnowBattleGame;
 import fr.iban.events.games.*;
 import fr.iban.events.options.Option;
 

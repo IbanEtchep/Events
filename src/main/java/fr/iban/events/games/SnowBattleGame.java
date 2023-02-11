@@ -1,8 +1,9 @@
-package fr.iban.events;
+package fr.iban.events.games;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.iban.bukkitcore.utils.Head;
 import fr.iban.common.teleport.SLocation;
+import fr.iban.events.EventsPlugin;
 import fr.iban.events.enums.GameState;
 import fr.iban.events.enums.GameType;
 import fr.iban.events.games.Game;
@@ -35,8 +36,8 @@ public class SnowBattleGame extends Game implements ProjectileListener, ArmorCha
     }
 
     @Override
-    public boolean isNotFinished() {
-        return !finished;
+    public boolean isFinished() {
+        return finished;
     }
 
     @Override

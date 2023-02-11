@@ -60,8 +60,8 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
     }
 
     @Override
-    public boolean isNotFinished() {
-        return !finished;
+    public boolean isFinished() {
+        return finished;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
 
         if (to.distanceSquared(getEndPoint()) <= 1) {
 
-            if (isNotFinished()) {
+            if (!isFinished()) {
                 Reward winReward = gameConfig.getWinReward();
                 if (winReward != null) {
                     RewardsDAO.addRewardAsync(player.getUniqueId().toString(), winReward.getName(), winReward.getServer(), winReward.getCommand());

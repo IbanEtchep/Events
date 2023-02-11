@@ -52,8 +52,8 @@ public class DropperGame extends Game implements MoveBlockListener, PlayerDamage
     }
 
     @Override
-    public boolean isNotFinished() {
-        return !finished;
+    public boolean isFinished() {
+        return finished;
     }
 
     public Location getMapLocation(int i) {

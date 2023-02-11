@@ -41,7 +41,7 @@ public abstract class Game {
     }
 
 
-    public abstract boolean isNotFinished();
+    public abstract boolean isFinished();
 
     public abstract Location getWaitingSpawnPoint();
 

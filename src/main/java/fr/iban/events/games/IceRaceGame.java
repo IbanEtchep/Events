@@ -9,6 +9,7 @@ import fr.iban.events.options.*;
 import fr.iban.icerace.IceRace;
 import fr.iban.icerace.IceRacePlugin;
 import fr.iban.icerace.Track;
+import fr.iban.icerace.enums.GameState;
 import fr.iban.icerace.event.PlayerRaceFinishEvent;
 import fr.iban.icerace.event.RaceFinishEvent;
 import org.bukkit.Bukkit;
@@ -71,8 +72,8 @@ public class IceRaceGame extends Game implements Listener {
     }
 
     @Override
-    public boolean isNotFinished() {
-        return false;
+    public boolean isFinished() {
+        return race.getState() == GameState.FINISHED;
     }
 
     @Override

@@ -1,8 +1,9 @@
-package fr.iban.events;
+package fr.iban.events.games;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.iban.bukkitcore.utils.Head;
 import fr.iban.bukkitcore.utils.ItemBuilder;
+import fr.iban.events.EventsPlugin;
 import fr.iban.events.enums.GameType;
 import fr.iban.events.games.LastToFallGame;
 import fr.iban.events.interfaces.ArmorChangeListener;
@@ -20,7 +21,7 @@ import java.util.UUID;
 
 public class PitchOutGame extends LastToFallGame implements ArmorChangeListener {
 
-    private HashMap<Player, Integer> lifes = new HashMap<Player, Integer>();
+    private final HashMap<Player, Integer> lifes = new HashMap<>();
 
     public PitchOutGame(EventsPlugin plugin) {
         super(plugin);
@@ -38,6 +39,7 @@ public class PitchOutGame extends LastToFallGame implements ArmorChangeListener 
 
         for (UUID uuid : players) {
             Player player = Bukkit.getPlayer(uuid);
+            if(player == null) continue;
             player.getInventory().clear();
             ItemStack head5 = Head.getByID(String.valueOf(9160));
             player.getInventory().setHelmet(head5);

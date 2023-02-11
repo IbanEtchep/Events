@@ -42,7 +42,7 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
     @Override
     public void finish() {
         state = GameState.FINISHED;
-        if(!getPlayers().isEmpty()){
+        if (!getPlayers().isEmpty()) {
             UUID winner = getPlayers().stream().findFirst().orElseThrow();
             Player winnerPlayer = Objects.requireNonNull(Bukkit.getPlayer(winner));
             winners.add(winner);
@@ -85,16 +85,16 @@ public abstract class LastToFallGame extends Game implements MoveBlockListener {
     public void removePlayer(Player player) {
         super.removePlayer(player);
         if (state == GameState.RUNNING) {
-            if (isNotFinished()) {
-                broadCastMessage("§7" + player.getName() + " est éliminé ! Plus que " + getPlayers().size() + " joueurs restants.");
-            } else {
+            if (isFinished()) {
                 finish();
+            } else {
+                broadCastMessage("§7" + player.getName() + " est éliminé ! Plus que " + getPlayers().size() + " joueurs restants.");
             }
         }
     }
 
     @Override
-    public boolean isNotFinished() {
+    public boolean isFinished() {
         return getPlayers().size() > 1;
     }
 
