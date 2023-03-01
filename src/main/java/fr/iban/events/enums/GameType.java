@@ -11,7 +11,8 @@ public enum GameType {
 
     SUMOTORI("Sumotori", "Tous les joueurs s'affrontent dans une arène, l'objectif et de faire valser les joueurs hors de celle-ci. Le dernier joueur à y subsister sera déclaré vainqueur.", LastToFallGame.getArenaOptions()),
     JUMP("Jump", "L'objectif est de bondir d'obstacle en obstacle pour arriver en haut le premier !", JumpGame.getArenaOptions()),
-    SPEEF("Spleef", "Equipé d'une pelle, vous devrez faire tomber vos adversaires dans le vide !", LastToFallGame.getArenaOptions()),
+    LABYRINTHE("Labyrinthe", "L'objectif est de trouver la sortie en premier !", LabyrintheGame.getArenaOptions()),
+    SPEEF("Spleef", "Equipés d'une pelle, vous devrez faire tomber vos adversaires dans le vide !", SpleefGame.getArenaOptions()),
     TNTRUN("TNT-Run", "Les blocs sur lesquels vous marchez tombent, soyez le dernier à subsister sur la plateforme !", LastToFallGame.getArenaOptions()),
     DROPPER("Dropper", "L'objectif est de sauter au coeur de la map et d'atteindre un espace restreint pour passer a la map suivante !", DropperGame.getArenaOptions()),
     ICERACE("IceRace", "Course de bateau sur glace !", IceRaceGame.getArenaOptions()),

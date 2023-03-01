@@ -31,8 +31,8 @@ public class PlayerMoveListener implements Listener {
 
         Game game = plugin.getGameManager().getPlayingGame(player);
 
-        if (game instanceof MoveBlockListener) {
-            ((MoveBlockListener) game).onMoveBlock(e);
+        if (game instanceof MoveBlockListener moveBlockListener) {
+            moveBlockListener.onMoveBlock(e);
         }
     }
 

@@ -19,7 +19,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.*;
 
-public class ParkourGame extends Game implements MoveBlockListener, PlayerDamageListener {
+public abstract class ParkourGame extends Game implements MoveBlockListener, PlayerDamageListener {
 
     private final Map<UUID, Location> checkpoints = new HashMap<>();
     private boolean finished = false;
@@ -38,6 +38,7 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
 
     @Override
     public void handlePlayerGameJoin(Player player) {
+        super.handlePlayerGameJoin(player);
         player.teleport(getStartPoint());
         player.sendTitle("§l§2Bonne chance ! ", "§aQue le meilleur gagné !", 10, 70, 20);
         player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.flat(1, Tone.A));
@@ -62,11 +63,6 @@ public class ParkourGame extends Game implements MoveBlockListener, PlayerDamage
     @Override
     public boolean isFinished() {
         return finished;
-    }
-
-    @Override
-    public GameType getType() {
-        return GameType.JUMP;
     }
 
     @Override

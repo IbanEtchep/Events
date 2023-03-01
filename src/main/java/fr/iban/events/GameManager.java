@@ -26,6 +26,8 @@ public class GameManager {
 
     private void registerGameHandlers() {
         GameType.JUMP.registerHandler(() -> new JumpGame(plugin));
+        GameType.LABYRINTHE.registerHandler(() -> new LabyrintheGame(plugin));
+        GameType.SPEEF.registerHandler(() -> new SpleefGame(plugin));
         GameType.DROPPER.registerHandler(() -> new DropperGame(plugin));
         GameType.TNTRUN.registerHandler(() -> new TNTRunGame(plugin));
         GameType.SUMOTORI.registerHandler(() -> new SumotoriGame(plugin));

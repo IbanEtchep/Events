@@ -40,6 +40,7 @@ public final class EventsPlugin extends JavaPlugin {
         getCommand("host").setExecutor(new HostCMD(this));
         registerListeners(new PlayerMoveListener(this),
                 new JoinQuitListeners(getGameManager()),
+                new BlockListeners(this),
                 new TeleportListener(gameManager),
                 new DamageListeners(gameManager),
                 new JoinQuitListeners(gameManager),

@@ -1,6 +1,7 @@
 package fr.iban.events.games;
 
 import fr.iban.events.EventsPlugin;
+import fr.iban.events.enums.GameType;
 import fr.iban.events.interfaces.VehicleExitListener;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -29,5 +30,10 @@ public class PigRaceGame extends ParkourGame implements VehicleExitListener {
     @Override
     public void onVehicleExit(VehicleExitEvent e) {
         e.setCancelled(true);
+    }
+
+    @Override
+    public GameType getType() {
+        return null;
     }
 }

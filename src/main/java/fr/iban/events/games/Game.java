@@ -100,10 +100,12 @@ public abstract class Game {
                 }
             }
 
-            Reward participationReward = getConfig().getParticipationReward();
-            if (participationReward != null && !winners.contains(uuid)) {
-                RewardsDAO.addRewardAsync(uuid.toString(), participationReward.getName(), participationReward.getServer(), participationReward.getCommand());
-                player.sendMessage("§aVous avez reçu une récompense pour votre participation ! (/recompenses)");
+            if(reward) {
+                Reward participationReward = getConfig().getParticipationReward();
+                if (participationReward != null && !winners.contains(uuid)) {
+                    RewardsDAO.addRewardAsync(uuid.toString(), participationReward.getName(), participationReward.getServer(), participationReward.getCommand());
+                    player.sendMessage("§aVous avez reçu une récompense pour votre participation ! (/recompenses)");
+                }
             }
         }
         getPlayers().remove(uuid);
