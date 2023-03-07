@@ -50,11 +50,6 @@ public final class EventsPlugin extends JavaPlugin {
         );
     }
 
-    @Override
-    public void onDisable() {
-        saveConfig();
-    }
-
     private void registerListeners(Listener... listeners) {
 
         PluginManager pm = Bukkit.getPluginManager();

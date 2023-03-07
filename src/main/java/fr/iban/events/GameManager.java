@@ -158,16 +158,19 @@ public class GameManager {
         } else if (option instanceof CuboidListOption cuboidListOption) {
             config.set(path, cuboidListOption.getValue());
         }
+        plugin.saveConfig();
     }
 
     public void addArena(GameType type, String arenaName) {
         String path = type.toString().toLowerCase() + "." + arenaName;
         config.createSection(path);
+        plugin.saveConfig();
     }
 
     public void deleteArena(GameType type, String arenaName) {
         String path = type.toString().toLowerCase() + "." + arenaName;
         config.set(path, null);
+        plugin.saveConfig();
     }
 
 }

@@ -3,10 +3,12 @@ package fr.iban.events.menus;
 import fr.iban.bukkitcore.CoreBukkitPlugin;
 import fr.iban.bukkitcore.menu.Menu;
 import fr.iban.bukkitcore.menu.RewardSelectMenu;
+import fr.iban.bukkitcore.rewards.Reward;
 import fr.iban.bukkitcore.rewards.RewardsDAO;
 import fr.iban.bukkitcore.utils.Head;
 import fr.iban.bukkitcore.utils.ItemBuilder;
 import fr.iban.common.messaging.message.EventAnnounce;
+import fr.iban.events.EventsPlugin;
 import fr.iban.events.games.Game;
 import fr.iban.events.tasks.StartTask;
 import org.bukkit.Bukkit;
@@ -14,6 +16,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigMenu extends Menu {
 
@@ -42,14 +47,18 @@ public class ConfigMenu extends Menu {
 
         if (displayNameEquals(item, "§2§lRécompense")) {
             RewardsDAO.getTemplateRewardsAsync().thenAccept(rewards -> {
-                Bukkit.getScheduler().runTask(core, () -> new RewardSelectMenu(player, rewards, reward -> {
+                List<Integer> allowedRewardsIds = EventsPlugin.getInstance().getConfig().getIntegerList("win-rewards-whitelist");
+                List<Reward> allowedRewards = rewards.stream().filter(reward -> allowedRewardsIds.contains(reward.getId())).toList();
+                Bukkit.getScheduler().runTask(core, () -> new RewardSelectMenu(player, allowedRewards, reward -> {
                     game.getConfig().setWinReward(reward);
                     open();
                 }).open());
             });
         } else if (displayNameEquals(item, "§2§lRécompense de participation")) {
             RewardsDAO.getTemplateRewardsAsync().thenAccept(rewards -> {
-                Bukkit.getScheduler().runTask(core, () -> new RewardSelectMenu(player, rewards, reward -> {
+                List<Integer> allowedRewardsIds = EventsPlugin.getInstance().getConfig().getIntegerList("participation-rewards-whitelist");
+                List<Reward> allowedRewards = rewards.stream().filter(reward -> allowedRewardsIds.contains(reward.getId())).toList();
+                Bukkit.getScheduler().runTask(core, () -> new RewardSelectMenu(player, allowedRewards, reward -> {
                     game.getConfig().setParticipationReward(reward);
                     open();
                 }).open());
