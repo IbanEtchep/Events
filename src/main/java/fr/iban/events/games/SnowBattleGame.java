@@ -49,13 +49,15 @@ public class SnowBattleGame extends Game implements ProjectileListener, ArmorCha
 
             @Override
             public void run() {
-                if (timer % 5 == 0 || timer < 5) {
-                    Bukkit.broadcastMessage("§aActivation des dégats dans " + timer + "s");
-                }
                 if (timer == 0) {
                     throwable = true;
                     cancel();
                 }
+
+                if (timer % 5 == 0 || timer < 5) {
+                    Bukkit.broadcastMessage("§aActivation des dégats dans " + timer + "s");
+                }
+
                 timer--;
             }
         }.runTaskTimer(plugin, 0, 20);
