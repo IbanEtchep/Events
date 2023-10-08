@@ -7,11 +7,13 @@ import fr.iban.common.teleport.SLocation;
 import fr.iban.events.EventsPlugin;
 import fr.iban.events.GameConfig;
 import fr.iban.events.GameManager;
+import fr.iban.events.GamePlayer;
 import fr.iban.events.enums.GameType;
 import fr.iban.events.enums.GameState;
 import fr.iban.events.menus.ConfigMenu;
 import fr.iban.events.options.IntOption;
 import fr.iban.events.options.Option;
+import fr.iban.events.utils.DiscordWebhook;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -19,6 +21,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
+import java.io.IOException;
 import java.util.*;
 
 public abstract class Game {
@@ -27,6 +30,7 @@ public abstract class Game {
     protected HashMap<String, Option<?>> cachedArenaOptions;
     protected Set<UUID> players = new HashSet<>();
     protected Set<UUID> winners = new HashSet<>();
+    protected List<GamePlayer> ranking = new ArrayList<>();
     protected Menu menu;
     protected GameState state = GameState.WAITING;
     protected GameManager manager;
@@ -100,13 +104,15 @@ public abstract class Game {
                 }
             }
 
-            if(reward) {
+            if (reward) {
                 Reward participationReward = getConfig().getParticipationReward();
                 if (participationReward != null && !winners.contains(uuid)) {
                     RewardsDAO.addRewardAsync(uuid.toString(), participationReward.getName(), participationReward.getServer(), participationReward.getCommand());
                     player.sendMessage("§aVous avez reçu une récompense pour votre participation ! (/recompenses)");
                 }
             }
+
+            ranking.add(0, new GamePlayer(player.getUniqueId(), player.getName()));
         }
         getPlayers().remove(uuid);
     }
@@ -177,7 +183,7 @@ public abstract class Game {
     }
 
     protected Option<?> getOption(String name) {
-        if(cachedArenaOptions == null) {
+        if (cachedArenaOptions == null) {
             cachedArenaOptions = new HashMap<>();
             for (Option<?> arenaOption : manager.getArenaOptions(getType(), getArena())) {
                 cachedArenaOptions.put(arenaOption.getName(), arenaOption);
@@ -186,4 +192,7 @@ public abstract class Game {
         return cachedArenaOptions.get(name);
     }
 
+    public List<GamePlayer> getRanking() {
+        return ranking;
+    }
 }

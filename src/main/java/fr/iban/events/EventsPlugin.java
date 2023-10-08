@@ -4,6 +4,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import fr.iban.events.commands.EventCMD;
 import fr.iban.events.commands.HostCMD;
 import fr.iban.events.listeners.*;
+import fr.iban.events.managers.DatabaseManager;
 import fr.iban.icerace.IceRacePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -15,6 +16,7 @@ public final class EventsPlugin extends JavaPlugin {
 
     private static EventsPlugin instance;
     private GameManager gameManager;
+    private DatabaseManager databaseManager;
     private WorldEditPlugin worldEditPlugin;
     private IceRacePlugin iceRacePlugin;
 
@@ -36,8 +38,11 @@ public final class EventsPlugin extends JavaPlugin {
         }
 
         gameManager = new GameManager(this);
+        databaseManager = new DatabaseManager(this);
+
         getCommand("event").setExecutor(new EventCMD(this));
         getCommand("host").setExecutor(new HostCMD(this));
+
         registerListeners(new PlayerMoveListener(this),
                 new JoinQuitListeners(getGameManager()),
                 new BlockListeners(this),
@@ -62,6 +67,10 @@ public final class EventsPlugin extends JavaPlugin {
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 
     public WorldEditPlugin getWorldEditPlugin() {

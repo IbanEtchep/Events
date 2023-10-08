@@ -3,26 +3,12 @@ package fr.iban.events.games;
 import fr.iban.bukkitcore.utils.ItemBuilder;
 import fr.iban.events.EventsPlugin;
 import fr.iban.events.enums.GameType;
-import fr.iban.icerace.IceRacePlugin;
-import fr.iban.icerace.enums.GameState;
-import fr.iban.icerace.player.IceRacePlayer;
-import fr.iban.icerace.util.TimerTask;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.title.Title;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
+import fr.iban.events.tasks.TimerTask;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class SumotoriGame extends LastToFallGame {
 

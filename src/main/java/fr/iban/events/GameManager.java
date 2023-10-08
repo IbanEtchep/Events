@@ -3,13 +3,17 @@ package fr.iban.events;
 import fr.iban.events.enums.GameType;
 import fr.iban.events.games.*;
 import fr.iban.events.options.*;
+import fr.iban.events.utils.DiscordWebhook;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GameManager {
 
@@ -33,7 +37,7 @@ public class GameManager {
         GameType.SUMOTORI.registerHandler(() -> new SumotoriGame(plugin));
         GameType.SNOWBATTLE.registerHandler(() -> new SnowBattleGame(plugin));
         GameType.PITCHOUT.registerHandler(() -> new PitchOutGame(plugin));
-        if(plugin.getIceRacePlugin() != null) {
+        if (plugin.getIceRacePlugin() != null) {
             GameType.ICERACE.registerHandler(() -> new IceRaceGame(plugin));
         }
     }
@@ -70,6 +74,16 @@ public class GameManager {
     }
 
     public void killEvent(Game game) {
+        sendHistoryWebhook(game);
+        if (!game.getRanking().isEmpty()) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                plugin.getDatabaseManager().addVictory(
+                        game.getRanking().get(0).getUniqueId(),
+                        game.getType(),
+                        game.getConfig().getWinReward().getName()
+                );
+            });
+        }
         getRunningEvents().remove(game);
     }
 
@@ -91,7 +105,7 @@ public class GameManager {
     @Nullable
     public Game getPlayingGame(Player player) {
         for (Game game : runningGames) {
-            if(game.getPlayers().contains(player.getUniqueId())) {
+            if (game.getPlayers().contains(player.getUniqueId())) {
                 return game;
             }
         }
@@ -171,6 +185,54 @@ public class GameManager {
         String path = type.toString().toLowerCase() + "." + arenaName;
         config.set(path, null);
         plugin.saveConfig();
+    }
+
+    protected void sendHistoryWebhook(Game game) {
+        String webhookURL = plugin.getConfig().getString("history-webhook", "");
+
+        if (webhookURL.isBlank()) {
+            return;
+        }
+
+        GameConfig gameConfig = game.getConfig();
+
+        String content = String.format(
+                "**## %s** \\n" +
+                        "**Map** : %s\\n" +
+                        "**Hôte** : %s \\n" +
+                        "**Nombre de participants** : %d\\n" +
+                        "**Récompenses** : \\n- Gagnant : %s \\n- Participation : %s",
+                game.getName(),
+                game.getArena(),
+                Objects.requireNonNull(Bukkit.getPlayer(game.getHost())).getName(),
+                game.getRanking().size(),
+                gameConfig.getWinReward() != null ? gameConfig.getWinReward().getName() : "Aucune",
+                gameConfig.getParticipationReward() != null ? gameConfig.getParticipationReward().getName() : "Aucune"
+        );
+
+        List<GamePlayer> ranking = game.getRanking();
+        if (ranking.size() >= 1) {
+            content += String.format("\\n**Podium** : \\n1. %s \\n", ranking.get(0).getName());
+        }
+
+        if (ranking.size() >= 2) {
+            content += String.format("2. %s \\n", ranking.get(1).getName());
+        }
+
+        if (ranking.size() >= 3) {
+            content += String.format("3. %s", ranking.get(3).getName());
+        }
+
+        content = content.replace("_", "\\\\_");
+
+        DiscordWebhook webhook = new DiscordWebhook(webhookURL);
+        webhook.setContent(content);
+
+        try {
+            webhook.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
