@@ -5,9 +5,8 @@ import fr.iban.bukkitcore.utils.Head;
 import fr.iban.bukkitcore.utils.ItemBuilder;
 import fr.iban.events.EventsPlugin;
 import fr.iban.events.enums.GameType;
-import fr.iban.events.games.LastToFallGame;
 import fr.iban.events.interfaces.ArmorChangeListener;
-import org.bukkit.Bukkit;
+import fr.iban.events.tasks.TimerTask;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -17,7 +16,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class PitchOutGame extends LastToFallGame implements ArmorChangeListener {
 
@@ -25,7 +23,7 @@ public class PitchOutGame extends LastToFallGame implements ArmorChangeListener 
 
     public PitchOutGame(EventsPlugin plugin) {
         super(plugin);
-        getConfig().setPvp(true);
+        getConfig().setPvp(false);
     }
 
     @Override
@@ -36,21 +34,32 @@ public class PitchOutGame extends LastToFallGame implements ArmorChangeListener 
     @Override
     public void start() {
         super.start();
+        new TimerTask(4, second -> {
+            if (second == 4) {
+                broadCastMessage("§c§lPVP dans...");
+            }
+            if (second == 3 || second == 2 || second == 1) {
+                broadCastMessage("§c§l" + second);
+            }
+            if (second == 0) {
+                broadCastMessage("§4§lGO !");
+                this.getConfig().setPvp(true);
+            }
+        }).start(plugin);
+    }
 
-        for (UUID uuid : players) {
-            Player player = Bukkit.getPlayer(uuid);
-            if(player == null) continue;
-            player.getInventory().clear();
-            ItemStack head5 = Head.getByID(String.valueOf(9160));
-            player.getInventory().setHelmet(head5);
-            lifes.put(player, 3);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
-            player.getInventory().addItem(new ItemBuilder(Material.BLAZE_ROD).setName("§").addEnchant(Enchantment.KNOCKBACK, 5).build());
-            player.getInventory().addItem(new ItemBuilder(Material.BOW).setName("§").addEnchant(Enchantment.ARROW_KNOCKBACK, 4).addEnchant(Enchantment.ARROW_INFINITE, 1).build());
-            player.getInventory().addItem(new ItemStack(Material.ARROW));
-            player.setMaximumNoDamageTicks(15);
-        }
-
+    @Override
+    public void handlePlayerGameJoin(Player player) {
+        super.handlePlayerGameJoin(player);
+        player.getInventory().clear();
+        ItemStack head5 = Head.getByID(String.valueOf(9160));
+        player.getInventory().setHelmet(head5);
+        lifes.put(player, 3);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
+        player.getInventory().addItem(new ItemBuilder(Material.BLAZE_ROD).setName("§").addEnchant(Enchantment.KNOCKBACK, 5).build());
+        player.getInventory().addItem(new ItemBuilder(Material.BOW).setName("§").addEnchant(Enchantment.ARROW_KNOCKBACK, 4).addEnchant(Enchantment.ARROW_INFINITE, 1).build());
+        player.getInventory().addItem(new ItemStack(Material.ARROW));
+        player.setMaximumNoDamageTicks(15);
     }
 
     @Override
