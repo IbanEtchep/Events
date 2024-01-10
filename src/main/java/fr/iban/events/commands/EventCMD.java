@@ -1,7 +1,7 @@
 package fr.iban.events.commands;
 
-import fr.iban.events.GameManager;
 import fr.iban.events.EventsPlugin;
+import fr.iban.events.GameManager;
 import fr.iban.events.enums.GameType;
 import fr.iban.events.menus.OptionsEditor;
 import org.bukkit.command.Command;
@@ -26,8 +26,7 @@ public class EventCMD implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             if (args.length >= 1 && player.hasPermission("spartacube.events")) {
                 switch (args[0].toLowerCase()) {
                     case "start":
