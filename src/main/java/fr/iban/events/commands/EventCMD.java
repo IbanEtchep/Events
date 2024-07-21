@@ -50,13 +50,13 @@ public class EventCMD implements CommandExecutor, TabCompleter {
                                     manager.addArena(type, name);
                                     player.sendMessage("§aL'arène a bien été crée.");
                                 } else {
-                                    player.sendMessage("§cUne arene à ce nom éxiste déjà.");
+                                    player.sendMessage("§cUne arene à ce nom existe déjà.");
                                 }
                             } else if (args[1].equalsIgnoreCase("edit")) {
                                 if (manager.getArenaNames(type).contains(name)) {
                                     new OptionsEditor(player, type, name, manager).open();
                                 } else {
-                                    player.sendMessage("§cCette arene n'éxiste pas.");
+                                    player.sendMessage("§cCette arene n'existe pas.");
                                 }
                             } else {
                                 player.sendMessage("§c/event arena §4create/edit§c eventtype nom");

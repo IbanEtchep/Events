@@ -77,10 +77,15 @@ public class GameManager {
         sendHistoryWebhook(game);
         if (!game.getRanking().isEmpty()) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                String reward = "Aucune";
+                if (game.getConfig().getWinReward() != null) {
+                    reward = game.getConfig().getWinReward().getName();
+                }
+
                 plugin.getDatabaseManager().addVictory(
                         game.getRanking().get(0).getUniqueId(),
                         game.getType(),
-                        game.getConfig().getWinReward().getName()
+                        reward
                 );
             });
         }

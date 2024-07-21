@@ -6,7 +6,6 @@ import fr.iban.common.teleport.SLocation;
 import fr.iban.events.EventsPlugin;
 import fr.iban.events.enums.GameState;
 import fr.iban.events.enums.GameType;
-import fr.iban.events.games.Game;
 import fr.iban.events.interfaces.ArmorChangeListener;
 import fr.iban.events.interfaces.ProjectileListener;
 import fr.iban.events.managers.CooldownManager;
@@ -74,9 +73,16 @@ public class SnowBattleGame extends Game implements ProjectileListener, ArmorCha
         }
         lifes.put(player, 5);
         player.setSaturatedRegenRate(0);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, false, false));
         player.teleport(getStartPoint());
         player.sendTitle("§l§2Bonne chance ! ", "§aQue le meilleur gagne !", 10, 70, 20);
         player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.flat(1, Note.Tone.A));
+    }
+
+    @Override
+    public void removePlayer(Player player, boolean reward) {
+        super.removePlayer(player, reward);
+        player.setSaturatedRegenRate(10);
     }
 
     public static List<Option<?>> getArenaOptions() {
